@@ -8,7 +8,9 @@ export function createSupabaseServerClient() {
   const supabaseKey = serviceRoleKey || anonKey;
 
   if (!supabaseUrl || !supabaseKey) {
-    throw new Error("Missing PUBLIC_SUPABASE_URL and Supabase key");
+    throw new Error(
+      "Missing Supabase env vars. Required: PUBLIC_SUPABASE_URL and either SUPABASE_SERVICE_ROLE_KEY or PUBLIC_SUPABASE_ANON_KEY.",
+    );
   }
 
   return createClient<Database>(supabaseUrl, supabaseKey, {

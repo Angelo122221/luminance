@@ -135,8 +135,9 @@ async function saveBudget() {
 
     const budget = buildBudgetPayload();
 
-    const res = await fetch("/api/budget", {
+    const res = await fetch(`/api/budget?t=${Date.now()}`, {
       method: "PUT",
+      cache: "no-store",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ budget }),
     });
@@ -154,12 +155,23 @@ async function saveBudget() {
 
 window.addEventListener("DOMContentLoaded", async () => {
   let autoSaveTimer;
+  let isHydrated = false;
   const scheduleAutoSave = () => {
+    if (!isHydrated) return;
     clearTimeout(autoSaveTimer);
     autoSaveTimer = setTimeout(() => {
       saveBudget();
     }, 500);
   };
+
+  try {
+    await loadBudget();
+    isHydrated = true;
+    document.getElementById("save-budget-message").textContent = "Auto-save is on. Changes are saved automatically.";
+  } catch (error) {
+    document.getElementById("save-budget-message").textContent =
+      error instanceof Error ? error.message : "Could not connect to database.";
+  }
 
   const tables = document.querySelectorAll(".budget-table");
   tables.forEach((table) => updateSectionTotals(table));
@@ -207,12 +219,4 @@ window.addEventListener("DOMContentLoaded", async () => {
     updateSectionTotals(table);
     scheduleAutoSave();
   });
-
-  try {
-    await loadBudget();
-    document.getElementById("save-budget-message").textContent = "Auto-save is on. Changes are saved automatically.";
-  } catch (error) {
-    document.getElementById("save-budget-message").textContent =
-      error instanceof Error ? error.message : "Could not connect to database.";
-  }
 });
