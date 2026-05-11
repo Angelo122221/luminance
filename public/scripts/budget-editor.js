@@ -121,7 +121,7 @@ function populateFromBudget(budget) {
 }
 
 async function loadBudget() {
-  const res = await fetch("/api/budget");
+  const res = await fetch(`/api/budget?t=${Date.now()}`, { cache: "no-store" });
   if (!res.ok) throw new Error("Failed to load budget");
   const payload = await res.json();
   populateFromBudget(payload.budget);

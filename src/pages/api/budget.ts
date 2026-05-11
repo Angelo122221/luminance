@@ -8,7 +8,10 @@ export const GET: APIRoute = async () => {
     const budget = await getBudgetState();
     return new Response(JSON.stringify({ budget }), {
       status: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+      },
     });
   } catch (error) {
     return new Response(
@@ -36,7 +39,10 @@ export const PUT: APIRoute = async ({ request }) => {
 
     return new Response(JSON.stringify({ ok: true }), {
       status: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+      },
     });
   } catch (error) {
     return new Response(

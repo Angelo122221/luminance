@@ -26,7 +26,7 @@ const formatMoney = (value, currencyCode) =>
   }).format(Number(value || 0));
 
 const refreshCardTotals = async () => {
-  const res = await fetch("/api/budget");
+  const res = await fetch(`/api/budget?t=${Date.now()}`, { cache: "no-store" });
   if (!res.ok) return;
 
   const payload = await res.json();
