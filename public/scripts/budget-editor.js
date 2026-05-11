@@ -166,11 +166,13 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   try {
     await loadBudget();
-    isHydrated = true;
     document.getElementById("save-budget-message").textContent = "Auto-save is on. Changes are saved automatically.";
   } catch (error) {
     document.getElementById("save-budget-message").textContent =
       error instanceof Error ? error.message : "Could not connect to database.";
+  } finally {
+    // Allow autosave even if initial fetch fails, so user edits can still persist.
+    isHydrated = true;
   }
 
   const tables = document.querySelectorAll(".budget-table");
