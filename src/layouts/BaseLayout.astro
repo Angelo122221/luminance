@@ -1,0 +1,45 @@
+---
+import "../styles/global.css";
+import "../styles.css";
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+const pathname = Astro.url.pathname;
+const navLinks = [
+  { href: "/", label: "Home", icon: "⌂" },
+  { href: "/dashboard", label: "Dashboard", icon: "◫" },
+  { href: "/budget/current", label: "Monthly Budget", icon: "◍" },
+  { href: "/settings", label: "Settings", icon: "⚙" },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} | Luminance</title>
+  </head>
+  <body>
+    <div class="page-shell">
+      <main class="container page-content">
+        <slot />
+      </main>
+      <details class="center-nav-menu global-center-nav">
+        <summary aria-label="Open navigation">
+          <span class="center-nav-icon" aria-hidden="true">◉</span>
+        </summary>
+        <nav class="center-nav-links" aria-label="App Navigation">
+          {navLinks.map((link) => (
+            <a class={pathname === link.href ? "active" : ""} href={link.href} aria-label={link.label} title={link.label}>
+              <span aria-hidden="true">{link.icon}</span>
+            </a>
+          ))}
+        </nav>
+      </details>
+    </div>
+  </body>
+</html>

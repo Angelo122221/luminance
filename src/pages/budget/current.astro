@@ -1,0 +1,19 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BudgetTable from "../../components/BudgetTable.astro";
+import { sampleBudget } from "../../data/sampleBudget";
+---
+
+<BaseLayout title="Monthly Budget">
+  <section class="page-header">
+    <p class="eyebrow">Budget Sheet</p>
+    <h1>{sampleBudget.monthLabel} Monthly Budget</h1>
+    <p>Spreadsheet-style breakdown for income, savings, and expenses.</p>
+  </section>
+
+  <section class="table-shell">
+    <BudgetTable budget={sampleBudget} />
+  </section>
+
+  <script type="module" src="/scripts/budget-editor.js"></script>
+</BaseLayout>

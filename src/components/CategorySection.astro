@@ -1,0 +1,81 @@
+---
+import type { BudgetItem } from "../data/sampleBudget";
+import { calculateTotals, itemDifference } from "../utils/budgetCalculations";
+import { formatCurrency } from "../utils/formatCurrency";
+
+interface Props {
+  title: string;
+  items: BudgetItem[];
+  currencyCode?: string;
+}
+
+const { title, items, currencyCode = "PHP" } = Astro.props;
+const rows = items.length > 0 ? items : [{ category: "", projected: 0, actual: 0 }];
+const totals = calculateTotals(rows);
+---
+
+<section class="table-section">
+  <div class="table-section-head">
+    <h3>{title}</h3>
+    <button type="button" class="add-row-button" data-add-row>
+      Add Row
+    </button>
+  </div>
+  <table class="budget-table" data-table-section={title}>
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Projected</th>
+        <th>Actual</th>
+        <th>Difference</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((item) => {
+        const difference = itemDifference(item);
+        return (
+          <tr data-category={item.category}>
+            <td>
+              <input class="budget-input budget-input-text" type="text" value={item.category} data-field="category" />
+            </td>
+            <td>
+              <input
+                class="budget-input"
+                type="number"
+                step="0.01"
+                value={item.projected}
+                data-field="projected"
+              />
+            </td>
+            <td>
+              <input class="budget-input" type="number" step="0.01" value={item.actual} data-field="actual" />
+            </td>
+            <td class={difference > 0 ? "negative" : difference < 0 ? "positive" : "neutral"} data-field="difference">
+              {formatCurrency(difference, currencyCode)}
+            </td>
+            <td>
+              <button type="button" class="delete-row-button" data-delete-row aria-label="Delete row">
+                Delete
+              </button>
+            </td>
+          </tr>
+        );
+      })}
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>Total</th>
+        <th data-total="projected">{formatCurrency(totals.projected, currencyCode)}</th>
+        <th data-total="actual">{formatCurrency(totals.actual, currencyCode)}</th>
+        <th
+          data-total="difference"
+          class={totals.difference > 0 ? "negative" : totals.difference < 0 ? "positive" : "neutral"}
+        >
+          {formatCurrency(totals.difference, currencyCode)}
+        </th>
+        <th></th>
+      </tr>
+    </tfoot>
+  </table>
+</section>

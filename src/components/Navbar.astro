@@ -1,0 +1,25 @@
+---
+const pathname = Astro.url.pathname;
+
+const links = [
+  { href: "/", label: "Home", icon: "⌂" },
+  { href: "/dashboard", label: "Dashboard", icon: "◫" },
+  { href: "/budget/current", label: "Monthly Budget", icon: "◍" },
+  { href: "/settings", label: "Settings", icon: "⚙" },
+];
+---
+
+<nav class="navbar">
+  <a class="brand" href="/">
+    <span class="brand-icon" aria-hidden="true">◉</span>
+    <span>Luminance</span>
+  </a>
+  <div class="nav-links segmented-nav">
+    {links.map((link) => (
+      <a class={pathname === link.href ? "active" : ""} href={link.href}>
+        <span class="nav-icon" aria-hidden="true">{link.icon}</span>
+        <span>{link.label}</span>
+      </a>
+    ))}
+  </div>
+</nav>

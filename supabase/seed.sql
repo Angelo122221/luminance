@@ -1,0 +1,2 @@
+-- Local development seed placeholder.
+-- Keep empty for now to avoid inserting data not tied to auth users.

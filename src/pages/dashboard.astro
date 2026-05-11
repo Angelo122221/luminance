@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import DashboardCard from "../components/DashboardCard.astro";
+import BudgetSummary from "../components/BudgetSummary.astro";
+import { sampleBudget } from "../data/sampleBudget";
+import { calculateTotals } from "../utils/budgetCalculations";
+import { formatCurrency } from "../utils/formatCurrency";
+
+const incomeTotals = calculateTotals(sampleBudget.income);
+const savingsTotals = calculateTotals(sampleBudget.savings);
+const expenseItems = sampleBudget.expenseGroups.flatMap((group) => group.items);
+const expenseTotals = calculateTotals(expenseItems);
+const netBalance = incomeTotals.actual - expenseTotals.actual - savingsTotals.actual;
+const statusMessage =
+  netBalance >= 0
+    ? "Great progress. Your current budget is positive this month."
+    : "Heads up. Your current budget is negative this month.";
+---
+
+<BaseLayout title="Dashboard">
+  <section class="page-header">
+    <p class="eyebrow">Overview</p>
+    <h1>{sampleBudget.monthLabel} Dashboard</h1>
+    <p>Static sample data for your current monthly view.</p>
+  </section>
+
+  <section class="dashboard-grid">
+    <DashboardCard title="Total Income" value={formatCurrency(incomeTotals.actual, sampleBudget.currencyCode)} />
+    <DashboardCard title="Total Expenses" value={formatCurrency(expenseTotals.actual, sampleBudget.currencyCode)} />
+    <DashboardCard title="Total Savings" value={formatCurrency(savingsTotals.actual, sampleBudget.currencyCode)} />
+    <DashboardCard title="Net Balance" value={formatCurrency(netBalance, sampleBudget.currencyCode)} />
+  </section>
+
+  <BudgetSummary message={statusMessage} />
+</BaseLayout>

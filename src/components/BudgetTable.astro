@@ -1,0 +1,32 @@
+---
+import type { BudgetData } from "../data/sampleBudget";
+import CategorySection from "./CategorySection.astro";
+
+interface Props {
+  budget: BudgetData;
+}
+
+const { budget } = Astro.props;
+const expenseGroups =
+  budget.expenseGroups.length > 0
+    ? budget.expenseGroups
+    : [
+        { group: "Home", items: [] },
+        { group: "Transportation", items: [] },
+        { group: "Daily Living", items: [] },
+        { group: "Entertainment", items: [] },
+        { group: "Health", items: [] },
+      ];
+---
+
+<div class="table-wrap" id="budget-editor">
+  <CategorySection title="Income" items={budget.income} currencyCode={budget.currencyCode} />
+  <CategorySection title="Savings" items={budget.savings} currencyCode={budget.currencyCode} />
+  {expenseGroups.map((group) => (
+    <CategorySection title={`Expenses: ${group.group}`} items={group.items} currencyCode={budget.currencyCode} />
+  ))}
+</div>
+
+<div class="save-bar">
+  <p id="save-budget-message" class="save-message">Auto-save is on. Changes are saved automatically.</p>
+</div>

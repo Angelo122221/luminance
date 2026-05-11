@@ -1,0 +1,48 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { sampleBudget } from "../data/sampleBudget";
+import { calculateTotals } from "../utils/budgetCalculations";
+import { formatCurrency } from "../utils/formatCurrency";
+import { getBudgetState } from "../lib/budgetStore";
+
+let budget = sampleBudget;
+try {
+  budget = await getBudgetState();
+} catch (_error) {
+  budget = sampleBudget;
+}
+
+const incomeTotals = calculateTotals(budget.income);
+const savingsTotals = calculateTotals(budget.savings);
+const expenseItems = budget.expenseGroups.flatMap((group) => group.items);
+const expenseTotals = calculateTotals(expenseItems);
+const unspentMoney = incomeTotals.actual - expenseTotals.actual - savingsTotals.actual;
+const now = new Date();
+const dateTimeLabel = now.toLocaleString("en-PH", {
+  weekday: "long",
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+  hour: "numeric",
+  minute: "2-digit",
+  second: "2-digit",
+});
+const currencyCode = budget.currencyCode || "PHP";
+---
+
+<BaseLayout title="Home">
+  <h1 class="brand-title">Luminance</h1>
+
+  <section class="bank-card-shell">
+    <article class="bank-card">
+      <p id="live-datetime" class="bank-card-datetime">{dateTimeLabel}</p>
+      <p class="bank-card-label">Available Balance</p>
+      <p id="available-balance" class="bank-card-amount">{formatCurrency(unspentMoney, currencyCode)}</p>
+      <div class="bank-card-meta">
+        <span id="month-label">{budget.monthLabel || "Current Month"}</span>
+        <span>Unspent Money</span>
+      </div>
+    </article>
+  </section>
+  <script type="module" src="/scripts/index-card.js"></script>
+</BaseLayout>
