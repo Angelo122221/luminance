@@ -71,12 +71,18 @@ function buildBudgetPayload() {
   tables.forEach((table) => {
     const title = normalizeTitle(table.dataset.tableSection);
     const entries = Array.from(table.querySelectorAll("tbody tr"))
-      .map((row) => {
-        const category = (row.querySelector('[data-field="category"]')?.value || "").trim();
+      .map((row, index) => {
+        const rawCategory = (row.querySelector('[data-field="category"]')?.value || "").trim();
+        const projected = Number(row.querySelector('[data-field="projected"]').value || 0);
+        const actual = Number(row.querySelector('[data-field="actual"]').value || 0);
+        const hasAmount = projected !== 0 || actual !== 0;
+        const fallbackPrefix =
+          title === "Income" ? "Income" : title === "Savings" ? "Savings" : title.startsWith("Expenses:") ? "Expense" : "Item";
+        const category = rawCategory || (hasAmount ? `${fallbackPrefix} ${index + 1}` : "");
         return {
           category,
-          projected: Number(row.querySelector('[data-field="projected"]').value || 0),
-          actual: Number(row.querySelector('[data-field="actual"]').value || 0),
+          projected,
+          actual,
         };
       })
       .filter((entry) => entry.category.length > 0 || entry.projected !== 0 || entry.actual !== 0);
